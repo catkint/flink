@@ -50,7 +50,17 @@ before_script:
    - "export -f travis_nanoseconds"
    - "export -f travis_time_start"
    - "export -f travis_time_finish"
-
+before_deploy:
+   - "tar zcf flink-1.9.tar.gz /home/travis/build/catkint/flink/target/"
+deploy:
+  provider: releases
+  api_key:
+    secure: $deploykey
+  file: app/build/outputs/apk/app-release.apk
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
 # Install maven 3.2.5 since xenial uses 3.3.9 for which shading is broken
 before_install:
    - source ./tools/travis/setup_maven.sh
@@ -64,7 +74,6 @@ notifications:
 
 stages:
   - name: compile
-  - name: test
   - name: E2E
     if: type = cron
   - name: cleanup
